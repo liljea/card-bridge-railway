@@ -12,6 +12,7 @@ import (
 	"log"
 	"mcs_bab_6/database"
 	"mcs_bab_6/routers"
+	"os"
 
 	_ "github.com/lib/pq"
 )
@@ -30,12 +31,15 @@ var (
 )
 
 func main() {
-	var PORT = ":8080"
+	// var PORT = ":8080"
 
-	psqlInfo := fmt.Sprintf(
-		`host=%s port=%d user=%s password=%s dbname=%s sslmode=disable`,
-		host, port, user, password, dbName,
-	)
+	// psqlInfo := fmt.Sprintf(
+	// 	`host=%s port=%d user=%s password=%s dbname=%s sslmode=disable`,
+	// 	host, port, user, password, dbName,
+	// )
+
+	psqlInfo := os.Getenv("DATABASE_URL")
+	var PORT = ":" + os.Getenv("PORT")
 
 	DB, err = sql.Open("postgres", psqlInfo)
 
@@ -48,6 +52,7 @@ func main() {
 	defer DB.Close()
 
 	routers.StartServer().Run(PORT)
+
 	fmt.Printf("Success Connected")
 	fmt.Printf("Server running on port %v", PORT)
 }
